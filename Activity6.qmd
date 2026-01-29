@@ -1,0 +1,170 @@
+---
+title: "Activity_6"
+subtitle: "Joshua Holt and Georgia Vasey"
+format: pdf
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+# 1. Functions
+
+## Q1.1)
+
+```{r}
+add_together(x=3, y=5)
+```
+
+## Q1.2)
+
+```{r eval=FALSE}
+add_together(x=3, y="five")
+```
+
+```         
+Error in x + y : non-numeric argument to binary operator
+```
+
+### The error is explaining that you cannot input letters or other characters that are not numbers into the add_together function.
+
+## Q1.3)
+
+```{r}
+#create new function, main_time, with x, y, and z will be the arguments
+main_time <- function(x, y, z){
+  output2 <- (x-y)^2/z
+  return(output2)
+}
+main_time(x=5, y=2, z=9)
+```
+
+## Q1.4)
+
+```{r}
+#Defining Vector
+bison <- c(1000, 800, 1200, 1400)
+
+#Creating function to find mean
+deviation <- function(x){
+  output3 <- x-mean(x) 
+  return(output3)
+  
+}
+
+deviation(x=bison)
+```
+
+# 2. Iteration
+
+## Q2.1)
+
+```{r}
+?iris
+```
+
+### The ?iris function brings us to the help page of iris which tells us that the unit of measurement is centimeters.
+
+## Q2.2)
+
+```{r}
+iris %>%
+  group_by(Species) %>% 
+  summarize(across(.cols = everything(), 
+                   .fns = median))
+```
+
+## Q2.3)
+
+```{r}
+#reading/defining data in csv
+cereal <- read_csv("data/cereal.csv")
+
+cereal |>
+  group_by(mfr) |>
+  summarize(across(.cols = where(is.numeric),
+                   .fns = mean))
+```
+
+## Q2.4)
+
+```{r}
+for(i in 1:10){
+  print(i^2)
+}
+```
+
+## Q2.5)
+
+### Q2.5a
+
+```{r}
+N0 = 300  #initial population size
+
+years = 50  #number of years into the future
+
+N = vector(length = years)  # create an empty vector to store pop. sizes
+
+N[1] = N0  #initial population size should be the first N
+
+lambda = 0.95  #growth rate
+
+# For every year t in 2 through 20 (remember, "years" also equals 20), apply the following equation
+for (t in 2:50) {
+  N[t] = N[t - 1] * lambda # Apply the equation
+}
+
+# Store the data output as a dataframe for plotting
+popn_data <- tibble(years = 1:years, # Make the years column = 1, 2, 3, ..., 50
+                    popn = N) # Make the population column the corresponding population vector that we calculated
+```
+
+### Q2.5b
+
+```{r}
+# Now plot the data with years on the x axis and population on the y
+popn_data %>% 
+  ggplot(aes(x = years, y = popn)) +
+  geom_point()
+```
+
+#### The population is declining somewhat exponentially over 50 years. It has declined to under 30 individuals when the current data in the end.
+
+## Q2.6)
+
+### I prefer the across() function because it gives column names of the ones you want to pull and and you can easily edit the function. The for() loop feels intricate and clunky. I'm more likely to make mistakes.
+
+## Q2.7)
+
+```{r}
+# Store a vector of unique species names from the Species column of Iris
+spp_names <- unique(iris$Species)
+
+# Create a vector that starts with 1 to the length of the spp_names, which is 3, and use i as an index for the species name
+for (i in 1:length(spp_names)) {
+  
+  filt_data <- iris %>% 
+    # Keep only the rows where Species matches the current species 
+    filter(Species == spp_names[i])
+  
+  # Build a ggplot object using the filtered data for the current species
+  plot <- filt_data %>% 
+    # Initialize the plot: x = Petal.Length, y = Petal.Width
+    ggplot(aes(x = Petal.Length,
+               y = Petal.Width)) +
+    # Add scatterplot points for each observation
+    geom_point() +
+    # Add a best-fit linear regression line
+    geom_smooth(method = "lm") +
+    # Set fixed axis limits so all species plots use the same x and y ranges
+    lims(x = c(0,8),
+         y = c(0,3)) +
+    # Add a title that includes the current species name
+    ggtitle(paste("Species:", spp_names[i]))
+  
+  #Display the plot for this species inside the loop 
+  print(plot)
+}
+```
