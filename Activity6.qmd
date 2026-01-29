@@ -12,6 +12,20 @@ library(here)
 
 # 1. Functions
 
+```{r}
+# Create a new function called add_together
+# x and y will be the two arguments to the function
+add_together  <- function(x, y){
+  
+  # Add x and y together, store as the object "output"
+  output <- x + y
+  
+  # Print out whatever is stored in "output"
+  return(output)
+  
+}
+```
+
 ## Q1.1)
 
 ```{r}
